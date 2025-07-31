@@ -9,7 +9,7 @@ router.post("/login", login);
 
 router.post("/logout", logout);
 
-// router.put("/update-profile",protectRoute ,updateProfile);
+router.put("/update-profile",protectRoute ,updateProfile);
 
 
 export default router;
