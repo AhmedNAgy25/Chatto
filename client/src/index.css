@@ -1,3 +1,185 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Responsive improvements */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar for webkit browsers */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--bc) / 0.2);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--bc) / 0.3);
+  }
+
+  /* Mobile touch improvements */
+  @media (max-width: 768px) {
+    .touch-scroll {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* Prevent text selection on buttons */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Form field fixes */
+  .form-control {
+    width: 100%;
+  }
+
+  .form-control .input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Ensure proper input width */
+  .input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Fix for DaisyUI input width issues */
+  .input-bordered {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Container width fixes */
+  .container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Responsive grid fixes */
+  @media (max-width: 1024px) {
+    .lg\\:grid-cols-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Animation delays for decorative elements */
+  .delay-1000 {
+    animation-delay: 1s;
+  }
+
+  .delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .delay-700 {
+    animation-delay: 0.7s;
+  }
+
+  /* Mobile sidebar improvements */
+  @media (max-width: 1024px) {
+    .sidebar-mobile {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 320px;
+      z-index: 40;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .sidebar-mobile.open {
+      transform: translateX(0);
+    }
+  }
+
+  /* Ensure proper button sizing on mobile */
+  .btn-circle {
+    border-radius: 50%;
+    aspect-ratio: 1;
+  }
+
+  /* Fix for mobile viewport issues */
+  @media (max-width: 640px) {
+    .h-screen {
+      height: 100vh;
+      height: 100dvh; /* Dynamic viewport height for mobile */
+    }
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  .min-w-0 {
+    min-width: 0;
+  }
+
+  /* Ensure proper flex behavior */
+  .flex-1 {
+    flex: 1 1 0%;
+  }
+
+  /* Mobile header styling */
+  .mobile-header {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Ensure proper spacing for mobile header */
+  @media (max-width: 1024px) {
+    .pt-20 {
+      padding-top: 5rem; /* 80px - accounts for navbar (56px) + mobile header (24px) */
+    }
+  }
+
+  /* Smooth transitions for mobile header */
+  .mobile-header-transition {
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Mobile header positioning below navbar */
+  @media (max-width: 640px) {
+    .mobile-header-below-navbar {
+      top: 3rem !important; /* 56px - navbar height */
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .mobile-header-below-navbar {
+      top: 3.5rem !important; /* 64px - navbar height on larger screens */
+    }
+  }
+
+  /* High z-index sidebar */
+  .sidebar-high-z {
+    z-index: 60 !important;
+  }
+
+  /* Enhanced sidebar shadow for better separation */
+  .sidebar-shadow {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}

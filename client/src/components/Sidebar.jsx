@@ -1,93 +1,121 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import SidebarSkeleton from "./skeleton/SidebarSkeleton";
-import { Users } from "lucide-react";
+import { SidebarHeader, UserItem } from "./sidebar";
 
-const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
-    useChatStore();
+const Sidebar = ({ onUserSelect }) => {
+  const {
+    getUsers,
+    users,
+    selectedUser,
+    setSelectedUser,
+    isUsersLoading,
+    allMessages,
+    getAllMessages,
+  } = useChatStore();
 
-  const { onlineUsers } = useAuthStore();
+  const { onlineUsers, authUser } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
     getUsers();
-  }, [getUsers]);
+    if (allMessages.length === 0) {
+      getAllMessages();
+    }
+  }, [getUsers, getAllMessages, allMessages.length]);
 
-  const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+  const getLatestMessage = useMemo(() => {
+    return (userId) => {
+      const userMessages = allMessages.filter(
+        (msg) => msg.senderId === userId || msg.receiverId === userId
+      );
+      return userMessages.length > 0
+        ? userMessages[userMessages.length - 1]
+        : null;
+    };
+  }, [allMessages]);
+
+  const getUnreadCount = useMemo(() => {
+    return (userId) => {
+      return allMessages.filter(
+        (msg) =>
+          msg.senderId === userId &&
+          msg.receiverId === authUser._id &&
+          !msg.read
+      ).length;
+    };
+  }, [allMessages, authUser._id]);
+
+  const sortedUsers = useMemo(() => {
+    return users.sort((a, b) => {
+      const aLatest = getLatestMessage(a._id);
+      const bLatest = getLatestMessage(b._id);
+
+      if (!aLatest && !bLatest) return 0;
+      if (!aLatest) return 1;
+      if (!bLatest) return -1;
+
+      return new Date(bLatest.createdAt) - new Date(aLatest.createdAt);
+    });
+  }, [users, getLatestMessage]);
+
+  const filteredUsers = useMemo(() => {
+    return showOnlineOnly
+      ? sortedUsers.filter((user) => onlineUsers.includes(user._id))
+      : sortedUsers;
+  }, [showOnlineOnly, sortedUsers, onlineUsers]);
+
+  const otherOnlineUsers = useMemo(() => {
+    return onlineUsers.filter((id) => id !== authUser._id);
+  }, [onlineUsers, authUser._id]);
+
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    if (onUserSelect) {
+      onUserSelect();
+    }
+  };
 
   if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
-    <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
-      <div className="border-b border-base-300 w-full p-5">
-        <div className="flex items-center gap-2">
-          <Users className="size-6" />
-          <span className="font-medium hidden lg:block">Contacts</span>
-        </div>
+    <aside className="h-full w-full border-r border-base-300 flex flex-col transition-all duration-200 bg-base-100 shadow-lg lg:shadow-none">
+      <SidebarHeader
+        onlineCount={otherOnlineUsers.length}
+        showOnlineOnly={showOnlineOnly}
+        onToggleOnlineOnly={setShowOnlineOnly}
+        onClose={onUserSelect}
+        showCloseButton={true}
+      />
 
-        <div className="mt-3 hidden lg:flex items-center gap-2">
-          <label className="cursor-pointer flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={showOnlineOnly}
-              onChange={(e) => setShowOnlineOnly(e.target.checked)}
-              className="checkbox checkbox-sm"
+      <div className="overflow-y-auto w-full py-3 flex-1 custom-scrollbar touch-scroll">
+        {filteredUsers.map((user) => {
+          const isOnline = onlineUsers.includes(user._id);
+          const unreadCount = getUnreadCount(user._id);
+          const latestMessage = getLatestMessage(user._id);
+
+          return (
+            <UserItem
+              key={user._id}
+              user={user}
+              isSelected={selectedUser?._id === user._id}
+              isOnline={isOnline}
+              unreadCount={unreadCount}
+              latestMessage={latestMessage}
+              onClick={handleUserSelect}
             />
-            <span className="text-sm">Show online only</span>
-          </label>
-          <span className="text-xs text-zinc-500">
-            ({onlineUsers.length - 1} online)
-          </span>
-        </div>
-      </div>
-
-      <div className="overflow-y-auto w-full py-3">
-        {filteredUsers.map((user) => (
-          <button
-            key={user._id}
-            onClick={() => setSelectedUser(user)}
-            className={`
-              w-full p-3 flex items-center gap-3
-              hover:bg-base-300 transition-colors
-              ${
-                selectedUser?._id === user._id
-                  ? "bg-base-300 ring-1 ring-base-300"
-                  : ""
-              }
-            `}
-          >
-            <div className="relative mx-auto lg:mx-0">
-              <img
-                src={user.profilePic || "/avatar.png"}
-                alt={user.name}
-                className="size-12 object-cover rounded-full"
-              />
-              {onlineUsers.includes(user._id) && (
-                <span
-                  className="absolute bottom-0 right-0 size-3 bg-green-500 
-                  rounded-full ring-2 ring-zinc-900"
-                />
-              )}
-            </div>
-
-            <div className="hidden lg:block text-left min-w-0">
-              <div className="font-medium truncate">{user.fullName}</div>
-              <div className="text-sm text-zinc-400">
-                {onlineUsers.includes(user._id) ? "Online" : "Offline"}
-              </div>
-            </div>
-          </button>
-        ))}
+          );
+        })}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-base-content/70 py-4">
+            {showOnlineOnly ? "No online users" : "No users found"}
+          </div>
         )}
       </div>
     </aside>
   );
 };
+
 export default Sidebar;

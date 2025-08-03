@@ -22,13 +22,18 @@ function App() {
 
   if (isCheckingAuth && !authUser) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader className="size-10 animate-spin"></Loader>
+      <div className="flex items-center justify-center h-screen bg-base-100">
+        <div className="text-center">
+          <Loader className="size-8 sm:size-10 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-sm sm:text-base text-base-content/70">
+            Loading...
+          </p>
+        </div>
       </div>
     );
   }
   return (
-    <div data-theme={theme}>
+    <div data-theme={theme} className="min-h-screen bg-base-100">
       <Navbar />
       <Routes>
         <Route
@@ -43,7 +48,10 @@ function App() {
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to="/" />}
         />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route
+          path="/settings"
+          element={<SettingsPage />}
+        />
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}

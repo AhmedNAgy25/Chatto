@@ -22,7 +22,6 @@ export const getMessages = async (req, res) => {
     const { id: userToChatId } = req.params;
     const myId = req.user._id;
 
-    // Validate that userToChatId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(userToChatId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
@@ -32,11 +31,26 @@ export const getMessages = async (req, res) => {
         { senderId: myId, receiverId: userToChatId },
         { senderId: userToChatId, receiverId: myId },
       ],
-    });
+    }).sort({ createdAt: 1 });
 
     res.status(200).json(messages);
   } catch (error) {
     console.log(`\nError in getMessages controller:`, error.message);
+    res.status(500).json({ message: "it's server error" });
+  }
+};
+
+export const getAllMessages = async (req, res) => {
+  try {
+    const myId = req.user._id;
+
+    const messages = await Message.find({
+      $or: [{ senderId: myId }, { receiverId: myId }],
+    }).sort({ createdAt: 1 });
+
+    res.status(200).json(messages);
+  } catch (error) {
+    console.log(`\nError in getAllMessages controller:`, error.message);
     res.status(500).json({ message: "it's server error" });
   }
 };
@@ -47,7 +61,6 @@ export const sendMessage = async (req, res) => {
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
-    // Validate that receiverId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(receiverId)) {
       return res.status(400).json({ message: "Invalid receiver ID" });
     }
@@ -69,6 +82,53 @@ export const sendMessage = async (req, res) => {
     res.status(201).json(newMessage);
   } catch (error) {
     console.log(`\nError in sendMessages controller:`, error.message);
+    res.status(500).json({ message: "it's server error" });
+  }
+};
+
+export const markMessageAsRead = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const myId = req.user._id;
+
+    if (!mongoose.Types.ObjectId.isValid(messageId)) {
+      return res.status(400).json({ message: "Invalid message ID" });
+    }
+
+    const message = await Message.findOneAndUpdate(
+      { _id: messageId, receiverId: myId },
+      { read: true },
+      { new: true }
+    );
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    res.status(200).json(message);
+  } catch (error) {
+    console.log(`\nError in markMessageAsRead controller:`, error.message);
+    res.status(500).json({ message: "it's server error" });
+  }
+};
+
+export const markAllMessagesAsRead = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const myId = req.user._id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    await Message.updateMany(
+      { senderId: userId, receiverId: myId, read: false },
+      { read: true }
+    );
+
+    res.status(200).json({ message: "Messages marked as read" });
+  } catch (error) {
+    console.log(`\nError in markAllMessagesAsRead controller:`, error.message);
     res.status(500).json({ message: "it's server error" });
   }
 };
