@@ -11,6 +11,18 @@
   ],
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "dest": "/client/dist/assets/$1"
+    },
+    {
+      "src": "/vite.svg",
+      "dest": "/client/dist/vite.svg"
+    },
+    {
+      "src": "/avatar.png",
+      "dest": "/client/dist/avatar.png"
+    },
+    {
       "src": "/(.*)",
       "dest": "/client/dist/index.html"
     }
