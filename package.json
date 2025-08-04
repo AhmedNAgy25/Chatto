@@ -1,0 +1,30 @@
+{
+  "name": "chatto-app",
+  "version": "1.0.0",
+  "description": "A real-time chat application built with React, Node.js, and Socket.IO",
+  "main": "server/src/index.js",
+  "scripts": {
+    "build": "npm run build:client",
+    "build:client": "cd client && npm install && npm run build",
+    "build:server": "cd server && npm install --production",
+    "start": "cd server && npm start",
+    "install:all": "npm install && cd server && npm install --production && cd ../client && npm install",
+    "clean": "rm -rf node_modules server/node_modules client/node_modules client/dist",
+    "deploy": "npm run build && vercel --prod",
+    "deploy:preview": "npm run build && vercel"
+  },
+  "keywords": [
+    "chat",
+    "real-time",
+    "react",
+    "nodejs",
+    "socket.io",
+    "mongodb"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
