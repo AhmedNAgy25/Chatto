@@ -1,64 +1,51 @@
 # Chatto - Real-time Chat Application
 
-A modern, real-time chat application built with React, Node.js, Socket.IO, and MongoDB. Features include image sharing, online status indicators, typing indicators, and a Telegram-like chat experience.
+A modern real-time chat application built with React, Node.js, Socket.IO, and MongoDB.
 
-## Features
+## 🚀 Live Demo
 
-### ✨ Core Features
+Visit: [https://chatto-app.onrender.com](https://chatto-app.onrender.com)
+
+## ✨ Features
 
 - **Real-time messaging** with Socket.IO
-- **Image sharing** with preview and full-size modal view
-- **Online/offline status** with green indicators
-- **Typing indicators** showing when users are typing
-- **Auto-scroll to bottom** like Telegram
 - **User authentication** with JWT
-- **Profile management** with avatar uploads
+- **Profile management** with image uploads
+- **Online/offline status** tracking
+- **Message read receipts**
+- **Responsive design** with Tailwind CSS
+- **Modern UI** with DaisyUI components
 
-### 🎨 UI/UX Features
-
-- **Modern design** with DaisyUI and Tailwind CSS
-- **Responsive layout** that works on desktop and mobile
-- **Dark/Light theme** support
-- **Smooth animations** and transitions
-- **Loading skeletons** for better UX
-- **Toast notifications** for user feedback
-
-### 🔒 Security Features
-
-- **JWT authentication** with secure cookies
-- **Password hashing** with bcrypt
-- **Input validation** and sanitization
-- **File upload restrictions** (5MB limit for images)
-
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
 
-- **React 19** with Vite
-- **Zustand** for state management
-- **Socket.IO Client** for real-time communication
-- **Tailwind CSS** + **DaisyUI** for styling
-- **Lucide React** for icons
-- **React Hot Toast** for notifications
+- React 19
+- Vite
+- Tailwind CSS
+- DaisyUI
+- Socket.IO Client
+- Zustand (State Management)
+- React Router DOM
 
 ### Backend
 
-- **Node.js** with Express
-- **Socket.IO** for real-time features
-- **MongoDB** with Mongoose
-- **JWT** for authentication
-- **Cloudinary** for image storage
-- **bcryptjs** for password hashing
+- Node.js
+- Express.js
+- Socket.IO
+- MongoDB (Mongoose)
+- JWT Authentication
+- Cloudinary (Image Uploads)
+- bcryptjs (Password Hashing)
 
-## Getting Started
+## 📦 Installation
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- MongoDB
-- Cloudinary account (for image uploads)
+- Node.js >= 18.0.0
+- npm >= 8.0.0
 
-### Installation
+### Setup
 
 1. **Clone the repository**
 
@@ -70,120 +57,95 @@ A modern, real-time chat application built with React, Node.js, Socket.IO, and M
 2. **Install dependencies**
 
    ```bash
-   # Install server dependencies
-   cd server
-   npm install
-
-   # Install client dependencies
-   cd ../client
-   npm install
+   npm run install:all
    ```
 
-3. **Environment Setup**
+3. **Environment Variables**
 
-   Create `.env` file in the server directory:
+   Create environment variables in your deployment platform (Render, Vercel, etc.):
 
    ```env
-   PORT=5001
-   MONGODB_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+   NODE_ENV=production
+   PORT=10000
+   MONGODB_URI=your-mongodb-connection-string
+   JWT_SECRET=your-jwt-secret
+   JWT_EXPIRE=7d
+   CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+   CLOUDINARY_API_KEY=your-cloudinary-api-key
+   CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+   CLIENT_URL=https://your-app-domain.com
+   COOKIE_SECRET=your-cookie-secret
    ```
 
-4. **Start the application**
-
+4. **Build and Deploy**
    ```bash
-   # Start the server (from server directory)
-   npm run dev
-
-   # Start the client (from client directory)
-   npm run dev
+   npm run build
+   npm start
    ```
 
-5. **Access the application**
-   - Frontend: http://localhost:5173
-   - Backend: http://localhost:5001
+## 🚀 Deployment
 
-## Features in Detail
+### Render (Recommended)
 
-### Image Sharing
+1. Connect your GitHub repository to Render
+2. Create a new Web Service
+3. Set the following:
+   - **Build Command**: `npm run build`
+   - **Start Command**: `npm start`
+4. Add all environment variables
+5. Deploy!
 
-- Click the image icon to select an image
-- Preview the image before sending
-- Click on sent images to view in full size
-- 5MB file size limit
-- Supports common image formats (JPEG, PNG, GIF, WebP)
+### Other Platforms
 
-### Online Status
+The app can be deployed on any platform that supports Node.js:
 
-- Green dot indicators show online users
-- Real-time updates when users come online/offline
-- "Show online only" filter in sidebar
-- Animated pulse effect for online indicators
+- Vercel
+- Railway
+- Heroku
+- DigitalOcean App Platform
 
-### Typing Indicators
+## 📁 Project Structure
 
-- Shows "typing..." when someone is typing
-- Automatically stops after 1 second of inactivity
-- Real-time updates across all connected clients
+```
+chatto/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── pages/        # Page components
+│   │   ├── store/        # Zustand stores
+│   │   └── lib/          # Utilities
+│   └── dist/             # Built files
+├── server/               # Node.js backend
+│   ├── src/
+│   │   ├── controllers/  # Route controllers
+│   │   ├── models/       # MongoDB models
+│   │   ├── routes/       # API routes
+│   │   └── middleware/   # Express middleware
+│   └── package.json
+└── render.yaml           # Render deployment config
+```
 
-### Chat Experience
+## 🔧 Available Scripts
 
-- Messages auto-scroll to bottom like Telegram
-- Smooth scrolling animations
-- Message timestamps
-- Responsive design for all screen sizes
+- `npm run build` - Build the client for production
+- `npm start` - Start the production server
+- `npm run install:all` - Install all dependencies
+- `npm run clean` - Clean all build artifacts
 
-## API Endpoints
-
-### Authentication
-
-- `POST /api/auth/signup` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `GET /api/auth/check` - Check authentication status
-- `PUT /api/auth/update-profile` - Update user profile
-
-### Messages
-
-- `GET /api/messages/users` - Get all users for sidebar
-- `GET /api/messages/:id` - Get messages with a specific user
-- `POST /api/messages/send/:id` - Send a message to a user
-
-## Socket.IO Events
-
-### Client to Server
-
-- `user_connected` - User connects to socket
-- `send_message` - Send a new message
-- `typing_start` - User starts typing
-- `typing_stop` - User stops typing
-
-### Server to Client
-
-- `user_online` - User comes online
-- `user_offline` - User goes offline
-- `online_users` - List of online users
-- `new_message` - New message received
-- `user_typing` - User is typing
-- `user_stop_typing` - User stopped typing
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+4. Submit a pull request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- Inspired by modern chat applications like Telegram and WhatsApp
-- Built with best practices for real-time applications
-- Uses modern React patterns and hooks
+- [Socket.IO](https://socket.io/) for real-time communication
+- [Tailwind CSS](https://tailwindcss.com/) for styling
+- [DaisyUI](https://daisyui.com/) for UI components
+- [Cloudinary](https://cloudinary.com/) for image uploads

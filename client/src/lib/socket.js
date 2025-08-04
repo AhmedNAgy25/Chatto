@@ -1,6 +1,12 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5001";
+const getSocketURL = () => {
+  if (import.meta.env.MODE === "development") {
+    return "http://localhost:5001";
+  }
+  // In production, use the same domain as the client
+  return window.location.origin;
+};
 
 class SocketService {
   constructor() {
@@ -15,12 +21,13 @@ class SocketService {
     }
 
     this.userId = userId;
-    this.socket = io(SOCKET_URL, {
+    this.socket = io(getSocketURL(), {
       withCredentials: true,
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      timeout: 10000,
     });
 
     this.socket.on("connect", () => {

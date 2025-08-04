@@ -18,8 +18,6 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  console.log({ authUser });
-
   if (isCheckingAuth && !authUser) {
     return (
       <div className="flex items-center justify-center h-screen bg-base-100">
@@ -48,10 +46,7 @@ function App() {
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to="/" />}
         />
-        <Route
-          path="/settings"
-          element={<SettingsPage />}
-        />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}

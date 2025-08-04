@@ -6,7 +6,7 @@ import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
   messages: [],
-  allMessages: [],  
+  allMessages: [],
   users: [],
   selectedUser: null,
   isUsersLoading: false,
@@ -134,7 +134,7 @@ export const useChatStore = create((set, get) => ({
       );
 
       if (messageExists && allMessageExists) {
-        return state;  
+        return state;
       }
 
       return {
