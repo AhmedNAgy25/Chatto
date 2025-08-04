@@ -4,11 +4,11 @@ A modern real-time chat application built with React, Node.js, Socket.IO, and Mo
 
 ## 🚀 Live Demo
 
-Visit: [https://chatto-app.onrender.com](https://chatto-app.onrender.com)
+Visit: [https://chatto-app.vercel.app](https://chatto-app.vercel.app)
 
 ## ✨ Features
 
-- **Real-time messaging** with Socket.IO
+- **Real-time messaging** with Socket.IO (Note: Limited on Vercel due to serverless)
 - **User authentication** with JWT
 - **Profile management** with image uploads
 - **Online/offline status** tracking
@@ -62,7 +62,7 @@ Visit: [https://chatto-app.onrender.com](https://chatto-app.onrender.com)
 
 3. **Environment Variables**
 
-   Create environment variables in your deployment platform (Render, Vercel, etc.):
+   Create environment variables in your deployment platform (Vercel, etc.):
 
    ```env
    NODE_ENV=production
@@ -85,24 +85,39 @@ Visit: [https://chatto-app.onrender.com](https://chatto-app.onrender.com)
 
 ## 🚀 Deployment
 
-### Render (Recommended)
+### Vercel (Recommended)
 
-1. Connect your GitHub repository to Render
-2. Create a new Web Service
-3. Set the following:
-   - **Build Command**: `npm run build`
-   - **Start Command**: `npm start`
-4. Add all environment variables
-5. Deploy!
+1. **Install Vercel CLI**
+
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Deploy to Vercel**
+
+   ```bash
+   vercel
+   ```
+
+3. **Set Environment Variables**
+
+   - Go to your Vercel dashboard
+   - Navigate to your project settings
+   - Add all the environment variables listed above
+
+4. **Alternative: Deploy via GitHub**
+   - Connect your GitHub repository to Vercel
+   - Vercel will automatically detect the configuration
+   - Set environment variables in the dashboard
 
 ### Other Platforms
 
 The app can be deployed on any platform that supports Node.js:
 
-- Vercel
 - Railway
 - Heroku
 - DigitalOcean App Platform
+- Render (requires credit card)
 
 ## 📁 Project Structure
 
@@ -122,7 +137,7 @@ chatto/
 │   │   ├── routes/       # API routes
 │   │   └── middleware/   # Express middleware
 │   └── package.json
-└── render.yaml           # Render deployment config
+└── vercel.json           # Vercel deployment config
 ```
 
 ## 🔧 Available Scripts
@@ -131,6 +146,23 @@ chatto/
 - `npm start` - Start the production server
 - `npm run install:all` - Install all dependencies
 - `npm run clean` - Clean all build artifacts
+
+## ⚠️ Important Notes
+
+### Socket.IO Limitations on Vercel
+
+Due to Vercel's serverless architecture, real-time Socket.IO features are limited:
+
+- **Local Development**: Full Socket.IO functionality
+- **Vercel Production**: Socket.IO is disabled (serverless limitations)
+- **Alternative**: Consider using WebSockets or Server-Sent Events for real-time features
+
+### Recommended Deployment Options
+
+1. **Vercel**: Best for static hosting and API routes
+2. **Railway**: Better for full-stack apps with Socket.IO
+3. **Render**: Good alternative (requires credit card)
+4. **Heroku**: Traditional hosting option
 
 ## 🤝 Contributing
 
@@ -149,3 +181,4 @@ This project is licensed under the MIT License.
 - [Tailwind CSS](https://tailwindcss.com/) for styling
 - [DaisyUI](https://daisyui.com/) for UI components
 - [Cloudinary](https://cloudinary.com/) for image uploads
+- [Vercel](https://vercel.com/) for hosting

@@ -13,9 +13,17 @@ class SocketService {
     this.socket = null;
     this.isConnected = false;
     this.userId = null;
+    this.isVercel = window.location.hostname.includes("vercel.app");
   }
 
   connect(userId) {
+    // Skip Socket.IO connection on Vercel for now (serverless limitations)
+    if (this.isVercel) {
+      console.log("Socket.IO disabled on Vercel (serverless limitations)");
+      this.isConnected = false;
+      return null;
+    }
+
     if (this.socket) {
       this.socket.disconnect();
     }
@@ -71,7 +79,7 @@ class SocketService {
   emit(event, data) {
     if (this.socket && this.isConnected) {
       this.socket.emit(event, data);
-    } else {
+    } else if (!this.isVercel) {
       console.warn(`Cannot emit ${event}: socket not connected`);
     }
   }
@@ -90,6 +98,10 @@ class SocketService {
 
   getConnected() {
     return this.isConnected;
+  }
+
+  isVercelEnvironment() {
+    return this.isVercel;
   }
 }
 

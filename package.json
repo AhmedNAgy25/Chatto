@@ -9,7 +9,9 @@
     "build:server": "cd server && npm install --production",
     "start": "cd server && npm start",
     "install:all": "npm install && cd server && npm install --production && cd ../client && npm install",
-    "clean": "rm -rf node_modules server/node_modules client/node_modules client/dist"
+    "clean": "rm -rf node_modules server/node_modules client/node_modules client/dist",
+    "deploy": "npm run build && vercel --prod",
+    "deploy:preview": "npm run build && vercel"
   },
   "keywords": [
     "chat",

@@ -19,16 +19,24 @@ const server = createServer(app);
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? [process.env.CLIENT_URL, "https://chatto-app.onrender.com"]
+      ? [
+          process.env.CLIENT_URL,
+          "https://chatto-app.vercel.app",
+          "https://chatto-app.onrender.com",
+        ]
       : ["http://localhost:5173", "http://localhost:3000"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
 };
 
-const io = new Server(server, {
-  cors: corsOptions,
-});
+// Initialize Socket.IO only if not in Vercel serverless environment
+let io;
+if (process.env.VERCEL !== "1") {
+  io = new Server(server, {
+    cors: corsOptions,
+  });
+}
 
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
@@ -61,86 +69,89 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const onlineUsers = new Map(); // socketId -> userId
-const userSockets = new Map(); // userId -> socketId
+// Socket.IO logic only if not in Vercel
+if (io) {
+  const onlineUsers = new Map(); // socketId -> userId
+  const userSockets = new Map(); // userId -> socketId
 
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  io.on("connection", (socket) => {
+    console.log("A user connected:", socket.id);
 
-  socket.on("user_connected", (userId) => {
-    onlineUsers.set(socket.id, userId);
-    userSockets.set(userId, socket.id);
+    socket.on("user_connected", (userId) => {
+      onlineUsers.set(socket.id, userId);
+      userSockets.set(userId, socket.id);
 
-    socket.broadcast.emit("user_online", userId);
-
-    const onlineUserIds = Array.from(onlineUsers.values());
-    io.emit("online_users", onlineUserIds);
-
-    console.log(
-      `User ${userId} connected. Total online: ${onlineUserIds.length}`
-    );
-  });
-
-  socket.on("send_message", (data) => {
-    const { message, receiverId } = data;
-    const senderId = onlineUsers.get(socket.id);
-
-    if (senderId && receiverId) {
-      const receiverSocketId = userSockets.get(receiverId);
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("new_message", {
-          message,
-          senderId,
-          receiverId,
-        });
-      }
-
-      socket.emit("new_message", {
-        message,
-        senderId,
-        receiverId,
-      });
-    }
-  });
-
-  socket.on("typing_start", (data) => {
-    const { userId } = data;
-    const receiverSocketId = userSockets.get(userId);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("user_typing", {
-        userId: onlineUsers.get(socket.id),
-      });
-    }
-  });
-
-  socket.on("typing_stop", (data) => {
-    const { userId } = data;
-    const receiverSocketId = userSockets.get(userId);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("user_stop_typing", {
-        userId: onlineUsers.get(socket.id),
-      });
-    }
-  });
-
-  socket.on("disconnect", () => {
-    const userId = onlineUsers.get(socket.id);
-    if (userId) {
-      onlineUsers.delete(socket.id);
-      userSockets.delete(userId);
-
-      socket.broadcast.emit("user_offline", userId);
+      socket.broadcast.emit("user_online", userId);
 
       const onlineUserIds = Array.from(onlineUsers.values());
       io.emit("online_users", onlineUserIds);
 
       console.log(
-        `User ${userId} disconnected. Total online: ${onlineUserIds.length}`
+        `User ${userId} connected. Total online: ${onlineUserIds.length}`
       );
-    }
-    console.log("User disconnected:", socket.id);
+    });
+
+    socket.on("send_message", (data) => {
+      const { message, receiverId } = data;
+      const senderId = onlineUsers.get(socket.id);
+
+      if (senderId && receiverId) {
+        const receiverSocketId = userSockets.get(receiverId);
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("new_message", {
+            message,
+            senderId,
+            receiverId,
+          });
+        }
+
+        socket.emit("new_message", {
+          message,
+          senderId,
+          receiverId,
+        });
+      }
+    });
+
+    socket.on("typing_start", (data) => {
+      const { userId } = data;
+      const receiverSocketId = userSockets.get(userId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("user_typing", {
+          userId: onlineUsers.get(socket.id),
+        });
+      }
+    });
+
+    socket.on("typing_stop", (data) => {
+      const { userId } = data;
+      const receiverSocketId = userSockets.get(userId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("user_stop_typing", {
+          userId: onlineUsers.get(socket.id),
+        });
+      }
+    });
+
+    socket.on("disconnect", () => {
+      const userId = onlineUsers.get(socket.id);
+      if (userId) {
+        onlineUsers.delete(socket.id);
+        userSockets.delete(userId);
+
+        socket.broadcast.emit("user_offline", userId);
+
+        const onlineUserIds = Array.from(onlineUsers.values());
+        io.emit("online_users", onlineUserIds);
+
+        console.log(
+          `User ${userId} disconnected. Total online: ${onlineUserIds.length}`
+        );
+      }
+      console.log("User disconnected:", socket.id);
+    });
   });
-});
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -159,9 +170,18 @@ app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`🔗 Visit => http://localhost:${PORT}`);
+// Start server only if not in Vercel serverless environment
+if (process.env.VERCEL !== "1") {
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(`🔗 Visit => http://localhost:${PORT}`);
+    connectDB();
+  });
+} else {
+  // For Vercel serverless, just connect to DB
   connectDB();
-});
+}
+
+// Export for Vercel
+export default app;
