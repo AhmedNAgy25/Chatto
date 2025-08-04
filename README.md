@@ -66,15 +66,14 @@ Visit: [https://chatto-app.vercel.app](https://chatto-app.vercel.app)
 
    ```env
    NODE_ENV=production
-   PORT=10000
-   MONGODB_URI=your-mongodb-connection-string
-   JWT_SECRET=your-jwt-secret
+   PORT=5001
+   MONGODB_URI=mongodb+srv://ahmedlion315:nHQXPzzmwkGrmw4e@cluster0.qbw0ekq.mongodb.net/chat_db?retryWrites=true&w=majority&appName=Cluster0
+   JWT_SECRET=eiSIfjaGAG%w3Ag@9saaWA:JFA%3ad7
    JWT_EXPIRE=7d
-   CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
-   CLOUDINARY_API_KEY=your-cloudinary-api-key
-   CLOUDINARY_API_SECRET=your-cloudinary-api-secret
-   CLIENT_URL=https://your-app-domain.com
-   COOKIE_SECRET=your-cookie-secret
+   CLOUDINARY_CLOUD_NAME=dxe6kdo1d
+   CLOUDINARY_API_KEY=379167172771272
+   CLOUDINARY_API_SECRET=IO23GfExY99tVe-5Q3ZpqPYOZn4
+   CLIENT_URL=https://chatto-app.vercel.app
    ```
 
 4. **Build and Deploy**
