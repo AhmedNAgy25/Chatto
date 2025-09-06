@@ -12,8 +12,8 @@ const AuthImagePattern = ({ title, subtitle }) => {
       </div>
 
       <div className="relative z-10 text-center max-w-md">
-        <div className="mb-8">
-          <div className="w-24 h-24 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mb-6 shadow-lg">
+        <div className="mb-8 text-center items-center justify-center flex">
+          <div className="w-24 h-24  bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mb-6 shadow-lg">
             <svg
               className="w-12 h-12 text-blue-600 dark:text-blue-400"
               fill="none"
