@@ -1,7 +1,7 @@
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu } from "lucide-react";
 
 import Sidebar from "../components/Sidebar";
 import NoChatSelected from "../components/NoChatSelected";
@@ -21,16 +21,26 @@ const HomePage = () => {
     setIsSidebarOpen(false);
   };
 
+  // prevent background scroll when sidebar is open (mobile)
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isSidebarOpen]);
+
   const isUserOnline = selectedUser
     ? onlineUsers.includes(selectedUser._id)
     : false;
 
   return (
     <div className="h-screen bg-base-200">
-      <div className="flex items-center justify-center pt-4 sm:pt-8 lg:pt-20 px-2 sm:px-4 h-full">
-        <div className="bg-base-100 rounded-lg shadow-lg w-full max-w-7xl h-[calc(100vh-2rem)] sm:h-[calc(100vh-4rem)] lg:h-[calc(100vh-8rem)]">
+      <div className="flex items-center justify-center w-full h-full">
+        <div className="bg-base-100 rounded-lg shadow-lg max-w-full w-[96%] mt-16 h-[calc(100vh-4rem)] lg:h-[calc(100vh-6rem)]">
           <div className="flex h-full rounded-lg overflow-hidden relative">
-            <div className="lg:hidden absolute top-0 left-0 right-0 z-50 bg-base-100 border-b border-base-300 px-4 py-3 mobile-header-below-navbar">
+            {/* Mobile Header */}
+            <div className="lg:hidden absolute top-0 left-0 right-0 z-50 bg-base-100 border-b border-base-300 px-4 py-3">
               <div className="flex items-center justify-between">
                 <button
                   onClick={toggleSidebar}
@@ -80,10 +90,11 @@ const HomePage = () => {
               </div>
             </div>
 
+            {/* Sidebar */}
             <div
               className={`
                 fixed lg:relative inset-y-0 left-0 z-[60]
-                w-80 lg:w-72
+                w-64 sm:w-72 lg:w-72
                 transform transition-transform duration-300 ease-in-out
                 ${
                   isSidebarOpen
@@ -95,14 +106,16 @@ const HomePage = () => {
               <Sidebar onUserSelect={closeSidebar} />
             </div>
 
-            {isSidebarOpen && (
-              <div
-                className="lg:hidden fixed inset-0 bg-black/50 z-30"
-                onClick={closeSidebar}
-              />
-            )}
+            {/* Overlay for mobile */}
+            <div
+              className={`lg:hidden fixed inset-0 bg-black/50 z-30 transition-opacity duration-300 ${
+                isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+              onClick={closeSidebar}
+            />
 
-            <div className="flex-1 relative min-w-0">
+            {/* Chat area */}
+            <div className="flex-1 relative min-w-0 pt-14 lg:pt-0">
               {!selectedUser ? <NoChatSelected /> : <ChatContainer />}
             </div>
           </div>
