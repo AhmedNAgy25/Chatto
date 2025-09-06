@@ -76,14 +76,14 @@ const MessageInput = ({
     >
       <form onSubmit={handleSubmit} className="p-3 sm:p-4 ">
         <div className="flex items-end gap-2 sm:gap-3 bg-base-100 rounded-xl border border-base-300 p-2 sm:p-3 shadow-sm">
-          <div className="flex-1">
+          <div className="flex-1 flex items-center">
             <textarea
               ref={messageInputRef}
               placeholder={placeholder}
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="textarea w-full resize-none min-h-[40px] sm:min-h-[44px] max-h-32 pr-12 border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-base-content/50 text-sm sm:text-base"
+              className="textarea w-full h-full resize-none border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-base-content/50 text-sm sm:text-base"
               rows={1}
               disabled={isSending}
               style={{
@@ -100,9 +100,9 @@ const MessageInput = ({
             onClick={() => fileInputRef.current?.click()}
             disabled={isSending}
             title="Send image"
-            className="p-1.5 sm:p-2 flex-shrink-0"
+            className="flex items-center justify-center min-h-[40px] sm:min-h-[44px] "
           >
-            <ImageIcon className="size-5 sm:size-6 text-base-content/60 group-hover:text-primary transition-colors" />
+            <ImageIcon className="w-full h-full  group-hover:text-primary transition-colors" />
           </Button>
 
           <input
